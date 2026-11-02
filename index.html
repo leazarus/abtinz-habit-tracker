@@ -12,6 +12,19 @@
 .top-actions{align-items:center;flex-wrap:nowrap;flex-shrink:0}.brand h1{white-space:nowrap}.status{white-space:nowrap}.sectionhead .btn{flex-shrink:0;white-space:nowrap}.btn .text{white-space:nowrap}
 .modal{max-height:92vh}.modalactions{position:sticky;bottom:-21px;background:var(--panel);padding:12px 0 2px;margin-bottom:-6px}
 @media(max-width:430px){.app{padding:16px 12px 90px}.brand h1{font-size:13px;letter-spacing:.1em}.brand p{font-size:8px;letter-spacing:.1em}.topbar{gap:8px}.brand{min-width:0;gap:9px}.brand p{display:none}.mark{width:38px;height:38px;border-radius:12px}.top-actions{gap:6px}.top-actions .status{font-size:9px;padding:4px 7px}.top-actions .iconbtn,.top-actions .btn{width:38px;height:38px;padding:0}.top-actions .btn .text{display:none}.sectionhead{flex-wrap:wrap}}
+
+/* --- backup export / import --- */
+.bk-pick{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);margin-bottom:8px;cursor:pointer}
+.bk-pick input{width:18px;height:18px;accent-color:var(--accent2);flex-shrink:0}
+.bk-pick span{flex:1;font-weight:650;font-size:13px}.bk-pick small{color:var(--muted);font-size:11px}
+.bk-pick.all{border-color:var(--accent);background:transparent}
+.bk-code{width:100%;min-height:130px;resize:vertical;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
+.bk-note{font-size:12px;color:var(--muted);margin:0 0 12px}
+.bk-msg{font-size:12px;margin:8px 0 12px;min-height:18px}.bk-msg.err{color:var(--accent2)}.bk-msg.ok{color:var(--good)}
+.bk-mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 12px}
+.bk-mode label{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);cursor:pointer;font-size:12px}
+.bk-mode input{margin-top:2px;accent-color:var(--accent2)}.bk-mode small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+@media(max-width:430px){.bk-mode{grid-template-columns:1fr}}
 </style></head>
 <body><div class="app" id="top">
 <header class="topbar"><div class="brand"><div class="mark">DK</div><div><h1>DARK KNIGHT</h1><p>DISCIPLINE OVER MOTIVATION</p></div></div><div class="top-actions"><span id="connectionBadge" class="status pending" title="Make connection status">● Not connected</span><button class="iconbtn" id="quickTheme" title="Toggle theme">◐</button><button class="btn" id="backupTop">⇧ <span class="text">Backup</span></button></div></header>
@@ -25,11 +38,31 @@
 <div class="page" id="page-reminders" data-page="reminders"><div class="pagehead"><div><h2>Reminders</h2><p>Plan your reminders and prepare them for Telegram via Make.</p></div></div><div class="pagebody"><section class="section" id="remindersSection"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">◷</div><div><h3>Reminders</h3><p>Plan here, send through Make.</p></div></div><button class="iconbtn" id="addReminder">＋</button></div><div class="list" id="reminderList"></div><div class="empty hidden" id="reminderEmpty"><b>No reminders planned</b>Add a reminder time to a habit or create one below.</div><button class="btn" id="jumpSync" style="width:100%;margin-top:11px">↻ Open Sync with Make</button><p class="note">Reminders are sent only after Make is configured and connected. Sync your planner data to update Make.</p></section></div></div>
 <div class="page" id="page-calendar" data-page="calendar"><div class="pagehead"><div><h2>Progress Calendar</h2><p>Look back at your consistency day by day.</p></div></div><div class="pagebody"><section class="section" id="calendarSection"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">▦</div><div><h3>Progress Calendar</h3><p>Daily completion overview.</p></div></div><div class="calendarhead"><button class="mini" id="prevMonth">‹</button><strong id="monthTitle"></strong><button class="mini" id="nextMonth">›</button></div></div><div class="calendar" id="calendar"></div><p class="note">Progress is calculated from check-ins saved in this browser.</p></section></div></div>
 <div class="page" id="page-sync" data-page="sync"><div class="pagehead"><div><h2>Sync &amp; Reminders</h2><p>Send planner data to your private reminder server.</p></div><span id="syncStatus" class="status pending">Not configured</span></div><div class="pagebody"><section class="section" id="syncSection"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">↻</div><div><h3>Connection</h3><p>Connect Dark Knight to your Cloudflare Worker.</p></div></div></div><div class="field"><label for="workerUrl">CLOUDFLARE WORKER URL</label><input id="workerUrl" type="url" placeholder="https://dark-knight-sync.yourname.workers.dev" autocomplete="url"><small class="muted">Paste your Cloudflare Worker URL here.</small></div><div class="field"><label for="timezone">TIME ZONE</label><input id="timezone" placeholder="e.g. Europe/London"></div><div class="settingrow"><div><b>Automatic sync</b><small>Sync changed planner data after a short delay.</small></div><label class="day"><input type="checkbox" id="autoSync"><span style="width:auto;padding:0 12px">Enabled</span></label></div><div class="exportactions"><button class="btn" id="testConnection">Test connection</button><button class="btn primary" id="syncNow">↻ Sync now</button></div><div class="section" id="tgCard" style="margin-top:15px;background:var(--panel2)"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">✈</div><div><h3>Telegram reminders</h3><p>Connect once to receive reminders in Telegram.</p></div></div><span id="tgBadge" class="status pending">Not connected</span></div><div class="exportactions"><button type="button" class="btn primary" id="tgConnect">Connect Telegram</button></div><p class="note hidden" id="tgLinkNote">Open this link, then press <b>Start</b> in Telegram:<br><a id="tgLink" href="#" target="_blank" rel="noopener" style="color:var(--accent2);word-break:break-all"></a></p></div><div class="section" style="margin-top:15px;background:var(--panel2)"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">✓</div><div><h3>What sync sends</h3><p>Planner data only — never bot tokens.</p></div></div></div><div class="meta" style="font-size:12px;line-height:1.8">Habits and reminder settings · daily check-ins · tasks · theme and timezone · progress summary</div></div><p class="note">Reminders are checked every minute on Cloudflare. Sync once, press Connect Telegram once, and you are done. Your data stays in this browser too.</p></section></div></div>
-<div class="page" id="page-settings" data-page="settings"><div class="pagehead"><div><h2>Settings</h2><p>Personalize the planner and manage your data.</p></div></div><div class="pagebody"><section class="section" id="settingsSection"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">⚙</div><div><h3>Settings</h3><p>Make it work for you.</p></div></div></div><div class="settingrow"><div><b>Appearance</b><small>Choose a theme.</small></div><select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option><option value="auto">Auto</option></select></div><div class="settingrow"><div><b>Export backup</b><small>Download planner data as JSON.</small></div><button class="btn" id="backup">Export</button></div><div class="settingrow"><div><b>Import backup</b><small>Restore a previous JSON export.</small></div><button class="btn" id="import">Import</button><input type="file" id="importFile" accept="application/json,.json" class="hidden"></div><div class="settingrow"><div><b>Reset planner</b><small>Clear data from this browser.</small></div><button class="btn danger" id="reset">Reset</button></div><p class="note">Planner data is saved in this browser. Sync sends a copy to Make; it does not automatically download remote data onto a second phone. Export a backup before clearing browser data.</p></section></div></div>
+<div class="page" id="page-settings" data-page="settings"><div class="pagehead"><div><h2>Settings</h2><p>Personalize the planner and manage your data.</p></div></div><div class="pagebody"><section class="section" id="settingsSection"><div class="sectionhead"><div class="sectiontitle"><div class="secticon">⚙</div><div><h3>Settings</h3><p>Make it work for you.</p></div></div></div><div class="settingrow"><div><b>Appearance</b><small>Choose a theme.</small></div><select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option><option value="auto">Auto</option></select></div><div class="settingrow"><div><b>Export backup</b><small>Choose what to include and copy it as a backup code.</small></div><button class="btn" id="backup">Export</button></div><div class="settingrow"><div><b>Import backup</b><small>Paste a backup code to restore or merge your data.</small></div><button class="btn" id="import">Import</button></div><div class="settingrow"><div><b>Reset planner</b><small>Clear data from this browser.</small></div><button class="btn danger" id="reset">Reset</button></div><p class="note">Planner data is saved in this browser. Sync sends a copy to Make; it does not automatically download remote data onto a second phone. Export a backup before clearing browser data.</p></section></div></div>
 <footer>DARK KNIGHT · BUILD CONSISTENCY, NOT PRESSURE</footer></div>
 <nav class="bottomnav"><button class="navbtn active" data-target="page-home"><span>⌂</span>Home</button><button class="navbtn" data-target="page-habits"><span>◈</span>Habits</button><button class="navbtn" data-target="page-tasks"><span>✓</span>Tasks</button><button class="navbtn" data-target="page-reminders"><span>◷</span>Reminders</button><button class="navbtn" data-target="page-calendar"><span>▦</span>Calendar</button><button class="navbtn" data-target="page-sync"><span>↻</span>Sync</button><button class="navbtn" data-target="page-settings"><span>⚙</span>Settings</button></nav>
 <div class="modalback" id="habitModal"><div class="modal"><div class="modalhead"><h3 id="habitModalTitle">Add a habit</h3><button class="iconbtn" id="closeHabit">×</button></div><form id="habitForm"><input type="hidden" id="habitId"><div class="formgrid"><div class="field full"><label for="habitName">HABIT NAME *</label><input id="habitName" required maxlength="80" placeholder="e.g. Practice violin"></div><div class="field"><label for="category">CATEGORY</label><select id="category"><option>Personal Growth</option><option>Health</option><option>Fitness</option><option>Learning</option><option>Mindfulness</option><option>Work</option><option>Other</option></select></div><div class="field"><label for="habitTime">REMINDER TIME (OPTIONAL)</label><input id="habitTime" type="time"></div><div class="field full"><label>ACTIVE DAYS</label><div class="weekdays" id="weekdays"><label class="day"><input type="checkbox" value="mon" checked><span>M</span></label><label class="day"><input type="checkbox" value="tue" checked><span>T</span></label><label class="day"><input type="checkbox" value="wed" checked><span>W</span></label><label class="day"><input type="checkbox" value="thu" checked><span>T</span></label><label class="day"><input type="checkbox" value="fri" checked><span>F</span></label><label class="day"><input type="checkbox" value="sat" checked><span>S</span></label><label class="day"><input type="checkbox" value="sun" checked><span>S</span></label></div></div><div class="field"><label for="habitColor">CUSTOM COLOR</label><div class="colorrow"><input type="color" id="habitColor" value="#c32635"><input id="habitHex" value="#c32635" maxlength="7" aria-label="Hex color"></div></div><div class="field"><label for="habitStart">START DATE</label><input type="date" id="habitStart"></div><div class="field full"><label for="habitMessage">REMINDER MESSAGE</label><input id="habitMessage" maxlength="220" placeholder="Time to show up for yourself."></div><div class="field full"><label for="habitNotes">NOTE (OPTIONAL)</label><textarea id="habitNotes" rows="2" maxlength="300" placeholder="Your reason, target, or small tip..."></textarea></div></div><div class="modalactions"><button type="button" class="btn" id="cancelHabit">Cancel</button><button class="btn primary">Save habit</button></div></form></div></div>
 <div class="modalback" id="reminderModal"><div class="modal"><div class="modalhead"><h3 id="reminderModalTitle">Add a reminder</h3><button class="iconbtn" id="closeReminder">×</button></div><form id="reminderForm"><input type="hidden" id="reminderId"><div class="field"><label for="reminderName">REMINDER TITLE *</label><input id="reminderName" required maxlength="100" placeholder="e.g. Evening reading"></div><div class="formgrid"><div class="field"><label for="reminderDate">DATE *</label><input type="date" id="reminderDate" required></div><div class="field"><label for="reminderTime">TIME *</label><input type="time" id="reminderTime" required></div><div class="field full"><label for="reminderMessage">TELEGRAM MESSAGE</label><textarea id="reminderMessage" rows="3" maxlength="500" placeholder="Write the message you want to receive."></textarea></div><div class="field full"><label class="day"><input type="checkbox" id="reminderEnabled" checked><span style="width:auto;padding:0 12px">Include in export</span></label></div></div><div class="modalactions"><button type="button" class="btn" id="cancelReminder">Cancel</button><button class="btn primary">Save reminder</button></div></form></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modalback" id="exportModal"><div class="modal">
+<div class="modalhead"><h3>Export backup</h3><button class="iconbtn" id="closeExport" type="button">×</button></div>
+<p class="bk-note">Choose what to include, then copy the code and paste it anywhere safe (a note, Notion, Telegram Saved Messages).</p>
+<div id="expPicks"></div>
+<div class="field"><label for="expCode">BACKUP CODE</label><textarea id="expCode" class="bk-code" readonly></textarea></div>
+<div class="modalactions"><button type="button" class="btn" id="expDone">Close</button><button type="button" class="btn primary" id="expCopy">Copy code</button></div>
+</div></div>
+<div class="modalback" id="importModal"><div class="modal">
+<div class="modalhead"><h3>Import backup</h3><button class="iconbtn" id="closeImport" type="button">×</button></div>
+<p class="bk-note">Paste your backup code below. Then choose what to bring in.</p>
+<div class="field"><label for="impCode">BACKUP CODE</label><textarea id="impCode" class="bk-code" placeholder="Paste the code here…"></textarea></div>
+<div class="bk-msg" id="impMsg"></div>
+<div id="impOptions" class="hidden">
+<div id="impPicks"></div>
+<div class="bk-mode">
+<label><input type="radio" name="impMode" value="merge" checked><span><b>Add to current</b><small>Keeps what you have and adds what is missing.</small></span></label>
+<label><input type="radio" name="impMode" value="replace"><span><b>Replace</b><small>Replaces the chosen parts with the backup.</small></span></label>
+</div></div>
+<div class="modalactions"><button type="button" class="btn" id="impCancel">Cancel</button><button type="button" class="btn primary" id="impGo" disabled>Import</button></div>
+</div></div>
 <script>
 (()=>{'use strict';const __mem={};const __store=(()=>{try{const k='__dk_probe';window.localStorage.setItem(k,'1');window.localStorage.removeItem(k);return window.localStorage}catch(e){return null}})();
 const __wn=()=>{try{const o=JSON.parse(window.name||'{}');return(o&&typeof o==='object')?o:{}}catch(e){return{}}};
@@ -51,7 +84,7 @@ function workerUrl(){return ($('workerUrl')?.value||data.sync?.workerUrl||'').tr
 async function testConnection(silent=false){const url=workerUrl();if(!url){setSyncStatus('Worker URL needed','pending');if(!silent)toast('Paste your Cloudflare Worker URL first.');return false}try{const r=await fetch(url,{method:'GET',headers:{'Accept':'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!j.ok)throw new Error('Worker did not confirm readiness');setSyncStatus('Connected to relay','connected');refreshTg();if(!silent)toast('Connection test successful.');return true}catch(e){setSyncStatus('Connection failed','pending');if(!silent)toast('Could not reach Worker. Check URL and deployment.');return false}}
 async function syncWithMake(manual=true){const url=workerUrl();if(!url){setSyncStatus('Not configured','pending');if(manual)toast('Add your Cloudflare Worker URL in Sync settings.');return false}if(isSyncing)return false;isSyncing=true;setSyncStatus('Syncing…','pending');try{const body=payload();const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});let result={};try{result=await r.json()}catch{}if(!r.ok||result.ok===false)throw new Error(result.error||('HTTP '+r.status));data.sync={...(data.sync||{}),workerUrl:url,auto:$('autoSync').checked,lastSyncAt:new Date().toISOString()};storage.setItem(KEY,JSON.stringify(data));setSyncStatus('Connected · synced','connected');if(typeof result.telegram_linked==='boolean')setTg(result.telegram_linked);if(manual)toast('Planner data synced.');return true}catch(e){setSyncStatus('Sync failed','pending');if(manual)toast('Sync failed. Check the Worker URL and that its database is connected.');return false}finally{isSyncing=false}}
 $('syncNow').onclick=()=>syncWithMake(true);$('testConnection').onclick=()=>testConnection(false);$('workerUrl').onchange=()=>{data.sync={...(data.sync||{}),workerUrl:workerUrl()};save();testConnection(true)};$('autoSync').onchange=()=>{data.sync={...(data.sync||{}),auto:$('autoSync').checked};save();toast($('autoSync').checked?'Automatic sync enabled.':'Automatic sync disabled.')};$('jumpSync').onclick=()=>showPage('page-sync');
-$('timezone').value=data.timezone||Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';$('timezone').onchange=e=>{data.timezone=e.target.value;save()};$('workerUrl').value=data.sync?.workerUrl||'';$('autoSync').checked=!!data.sync?.auto;if(data.sync?.workerUrl)setSyncStatus('Checking connection…','pending');else setSyncStatus('Not connected','pending');$('themeSelect').onchange=e=>{data.theme=e.target.value;save();theme()};$('quickTheme').onclick=()=>{data.theme=data.theme==='dark'?'light':'dark';save();theme();toast('Theme: '+data.theme)};$('prevMonth').onclick=()=>{data.calendarOffset=(data.calendarOffset||0)-1;save();renderCalendar()};$('nextMonth').onclick=()=>{data.calendarOffset=(data.calendarOffset||0)+1;save();renderCalendar()};$('backup').onclick=$('backupTop').onclick=()=>download(data,'dark-knight-backup.json');$('import').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!Array.isArray(d.habits)||!d.logs)throw Error();if(!(await askConfirm('Import this backup and replace current planner data?')))return;data={...defaults(),...d};save();render();toast('Backup imported.')}catch(err){toast('Could not read that backup file.')}finally{e.target.value=''}};$('reset').onclick=async()=>{if(!(await askConfirm('Clear all habits, check-ins, tasks and reminders from this browser? Export a backup first if needed.')))return;const sync=data.sync;data=defaults();data.sync=sync;save();render();toast('Planner reset.')};function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.target===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='page-sync'){$('workerUrl').value=data.sync?.workerUrl||'';$('autoSync').checked=!!data.sync?.auto}}document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showPage(b.dataset.target));
+$('timezone').value=data.timezone||Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';$('timezone').onchange=e=>{data.timezone=e.target.value;save()};$('workerUrl').value=data.sync?.workerUrl||'';$('autoSync').checked=!!data.sync?.auto;if(data.sync?.workerUrl)setSyncStatus('Checking connection…','pending');else setSyncStatus('Not connected','pending');$('themeSelect').onchange=e=>{data.theme=e.target.value;save();theme()};$('quickTheme').onclick=()=>{data.theme=data.theme==='dark'?'light':'dark';save();theme();toast('Theme: '+data.theme)};$('prevMonth').onclick=()=>{data.calendarOffset=(data.calendarOffset||0)-1;save();renderCalendar()};$('nextMonth').onclick=()=>{data.calendarOffset=(data.calendarOffset||0)+1;save();renderCalendar()};$('reset').onclick=async()=>{if(!(await askConfirm('Clear all habits, check-ins, tasks and reminders from this browser? Export a backup first if needed.')))return;const sync=data.sync;data=defaults();data.sync=sync;save();render();toast('Planner reset.')};function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.target===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='page-sync'){$('workerUrl').value=data.sync?.workerUrl||'';$('autoSync').checked=!!data.sync?.auto}}document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showPage(b.dataset.target));
 
 /* --- in-app confirm dialog (browser confirm() is blocked in Notion embeds) --- */
 function askConfirm(msg){return new Promise(res=>{const back=document.createElement('div');back.className='modalback open';back.style.zIndex=60;back.innerHTML='<div class="modal" style="max-width:380px"><h3 style="margin:0 0 10px">Please confirm</h3><p style="margin:0 0 6px;color:var(--muted)"></p><div class="modalactions"><button type="button" class="btn" data-a="no">Cancel</button><button type="button" class="btn primary" data-a="yes">Confirm</button></div></div>';back.querySelector('p').textContent=msg;const done=v=>{back.remove();res(v)};back.onclick=e=>{const a=e.target.dataset&&e.target.dataset.a;if(a)done(a==='yes');else if(e.target===back)done(false)};document.body.append(back)})}
@@ -116,6 +149,115 @@ $('tgConnect').onclick=async()=>{
     clearInterval(tgPoll);let n=0;
     tgPoll=setInterval(async()=>{n++;if(await refreshTg()){toast('Telegram connected.')}else if(n>=45){clearInterval(tgPoll);tgPoll=null}},4000);
   }catch(e){toast(e.message||'Could not get the Telegram link.')}
+};
+
+/* --- backup export / import (copy & paste code, with section picker) --- */
+const BK_PREFIX='DKBACKUP1:';
+const BK_SECTIONS=[
+  {key:'habits',label:'Habits',count:v=>(v||[]).length+' habits'},
+  {key:'logs',label:'Check-in history',count:v=>Object.keys(v||{}).length+' days'},
+  {key:'tasks',label:'Tasks',count:v=>(v||[]).length+' tasks'},
+  {key:'reminders',label:'Reminders',count:v=>(v||[]).length+' reminders'},
+  {key:'settings',label:'Theme & timezone',count:()=>'appearance'}
+];
+function bkCurrent(){return{habits:data.habits,logs:data.logs,tasks:data.tasks,reminders:data.reminders,settings:{theme:data.theme||'dark',timezone:data.timezone||''}}}
+function bkEncode(sections){const json=JSON.stringify({app:'DARK_KNIGHT',format:1,exported_at:new Date().toISOString(),sections});return BK_PREFIX+btoa(unescape(encodeURIComponent(json)))}
+function bkDecode(text){
+  let t=String(text||'').trim();if(!t)throw new Error('empty');
+  let obj;
+  if(t.startsWith(BK_PREFIX)){const b=t.slice(BK_PREFIX.length).replace(/\s+/g,'');obj=JSON.parse(decodeURIComponent(escape(atob(b))))}
+  else obj=JSON.parse(t);
+  if(!obj||typeof obj!=='object')throw new Error('bad');
+  let sec=obj.sections&&typeof obj.sections==='object'?obj.sections:{habits:obj.habits,logs:obj.logs,tasks:obj.tasks,reminders:obj.reminders,settings:(obj.theme||obj.timezone)?{theme:obj.theme,timezone:obj.timezone}:undefined};
+  const out={};
+  if(Array.isArray(sec.habits))out.habits=sec.habits.filter(h=>h&&typeof h==='object'&&h.id&&h.name);
+  if(sec.logs&&typeof sec.logs==='object'&&!Array.isArray(sec.logs))out.logs=sec.logs;
+  if(Array.isArray(sec.tasks))out.tasks=sec.tasks.filter(x=>x&&typeof x==='object'&&x.id&&x.title);
+  if(Array.isArray(sec.reminders))out.reminders=sec.reminders.filter(x=>x&&typeof x==='object'&&x.id&&x.title);
+  if(sec.settings&&typeof sec.settings==='object')out.settings=sec.settings;
+  if(!Object.keys(out).length)throw new Error('nothing');
+  return out;
+}
+/* checkbox list with an "Everything" master box */
+function bkBuildPicks(box,sections,onChange){
+  box.innerHTML='';
+  const mk=(label,note,cls)=>{const l=document.createElement('label');l.className='bk-pick '+(cls||'');l.innerHTML='<input type="checkbox" checked><span></span><small></small>';l.querySelector('span').textContent=label;l.querySelector('small').textContent=note||'';box.append(l);return l.querySelector('input')};
+  const keys=BK_SECTIONS.filter(x=>sections[x.key]!==undefined);
+  const master=mk('Everything','select all','all');
+  const boxes={};
+  keys.forEach(x=>{boxes[x.key]=mk(x.label,x.count(sections[x.key]))});
+  const sync=()=>{const v=Object.values(boxes);master.checked=v.every(b=>b.checked);master.indeterminate=!master.checked&&v.some(b=>b.checked);onChange()};
+  master.onchange=()=>{Object.values(boxes).forEach(b=>b.checked=master.checked);master.indeterminate=false;onChange()};
+  Object.values(boxes).forEach(b=>b.onchange=sync);
+  return ()=>keys.filter(x=>boxes[x.key].checked).map(x=>x.key);
+}
+let bkSelected=()=>[];
+function bkRefreshExport(){
+  const cur=bkCurrent(),keys=bkSelected(),pick={};
+  keys.forEach(k=>pick[k]=cur[k]);
+  $('expCode').value=keys.length?bkEncode(pick):'';
+  $('expCopy').disabled=!keys.length;
+}
+function openExport(){bkSelected=bkBuildPicks($('expPicks'),bkCurrent(),bkRefreshExport);bkRefreshExport();$('exportModal').classList.add('open')}
+function closeExport(){$('exportModal').classList.remove('open')}
+$('backup').onclick=$('backupTop').onclick=openExport;
+$('closeExport').onclick=$('expDone').onclick=closeExport;
+$('exportModal').addEventListener('mousedown',e=>{if(e.target===$('exportModal'))closeExport()});
+$('expCode').onclick=()=>$('expCode').select();
+$('expCopy').onclick=async()=>{
+  const ta=$('expCode');if(!ta.value)return;
+  try{await navigator.clipboard.writeText(ta.value);toast('Backup code copied.');return}catch(e){}
+  try{ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);if(document.execCommand('copy')){toast('Backup code copied.');return}}catch(e){}
+  ta.select();toast('Select the code and copy it manually.');
+};
+
+let impParsed=null,impSelected=()=>[];
+function impMsg(t,c){const m=$('impMsg');m.textContent=t||'';m.className='bk-msg '+(c||'')}
+function impReset(){impParsed=null;$('impCode').value='';impMsg('');$('impOptions').classList.add('hidden');$('impGo').disabled=true}
+function openImport(){impReset();$('importModal').classList.add('open');setTimeout(()=>{try{$('impCode').focus({preventScroll:true})}catch(e){}},50)}
+function closeImport(){$('importModal').classList.remove('open')}
+function impUpdateGo(){$('impGo').disabled=!impParsed||!impSelected().length}
+function impRead(){
+  const v=$('impCode').value;
+  if(!v.trim()){impParsed=null;impMsg('');$('impOptions').classList.add('hidden');$('impGo').disabled=true;return}
+  try{
+    impParsed=bkDecode(v);
+    impSelected=bkBuildPicks($('impPicks'),impParsed,impUpdateGo);
+    $('impOptions').classList.remove('hidden');
+    impMsg('Code is valid. Choose what to import.','ok');
+    impUpdateGo();
+  }catch(e){
+    impParsed=null;$('impOptions').classList.add('hidden');$('impGo').disabled=true;
+    impMsg('This does not look like a valid backup code. Check that you copied all of it.','err');
+  }
+}
+$('impCode').addEventListener('input',impRead);
+$('impCode').addEventListener('paste',()=>setTimeout(impRead,0));
+$('import').onclick=openImport;
+$('closeImport').onclick=$('impCancel').onclick=closeImport;
+$('importModal').addEventListener('mousedown',e=>{if(e.target===$('importModal'))closeImport()});
+function bkMergeById(cur,inc){const ids=new Set(cur.map(x=>x.id));let added=0;inc.forEach(x=>{if(!ids.has(x.id)){cur.push(copy(x));added++}});return added}
+$('impGo').onclick=async()=>{
+  if(!impParsed)return;
+  const keys=impSelected();if(!keys.length)return;
+  const mode=(document.querySelector('input[name="impMode"]:checked')||{}).value||'merge';
+  if(mode==='replace'){
+    const names=keys.map(k=>BK_SECTIONS.find(x=>x.key===k).label.toLowerCase()).join(', ');
+    if(!(await askConfirm('Replace your current '+names+' with the backup? This cannot be undone.')))return;
+  }
+  keys.forEach(k=>{
+    const inc=impParsed[k];
+    if(k==='habits'||k==='tasks'||k==='reminders'){
+      if(mode==='replace')data[k]=copy(inc);else bkMergeById(data[k],inc);
+    }else if(k==='logs'){
+      if(mode==='replace')data.logs=copy(inc);
+      else Object.keys(inc).forEach(d=>{data.logs[d]={...(data.logs[d]||{}),...inc[d]}});
+    }else if(k==='settings'){
+      if(inc.theme)data.theme=inc.theme;
+      if(inc.timezone){data.timezone=inc.timezone;$('timezone').value=inc.timezone}
+    }
+  });
+  save();render();closeImport();toast('Backup imported.');
 };
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeHabit();closeReminder()}});render();if(data.sync?.workerUrl)testConnection(true);
